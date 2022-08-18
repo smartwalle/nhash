@@ -106,10 +106,10 @@ func (this *Hash[T]) Get(key string) T {
 
 	var nHash = this.opts.hash()
 	nHash.Write([]byte(key))
-	var hValue = nHash.Sum32()
+	var value = nHash.Sum32()
 
 	i := sort.Search(this.length, func(i int) bool {
-		return this.nodes[i].point >= hValue
+		return this.nodes[i].point >= value
 	})
 
 	if i == this.length {
