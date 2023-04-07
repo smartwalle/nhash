@@ -1,8 +1,7 @@
 package ketama
 
 // Package ketama implements consistent hashing compatible with Algorithm::ConsistentHash::Ketama
-// This is a fork of https://github.com/mncaudill/ketama/blob/master/ketama.go written in a
-// more extendable way
+// This is a fork of https://github.com/mncaudill/ketama/blob/master/ketama.go
 
 import (
 	"github.com/smartwalle/nhash/ketama/internal/sha1"
