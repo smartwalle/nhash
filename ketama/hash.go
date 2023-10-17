@@ -16,15 +16,15 @@ type node[T any] struct {
 	point uint32
 }
 
-func (this *node[T]) String() string {
-	return this.key
+func (n *node[T]) String() string {
+	return n.key
 }
 
 type nodeList[T any] []node[T]
 
-func (n nodeList[T]) Len() int           { return len(n) }
-func (n nodeList[T]) Less(i, j int) bool { return n[i].point < n[j].point }
-func (n nodeList[T]) Swap(i, j int)      { n[i], n[j] = n[j], n[i] }
+func (nl nodeList[T]) Len() int           { return len(nl) }
+func (nl nodeList[T]) Less(i, j int) bool { return nl[i].point < nl[j].point }
+func (nl nodeList[T]) Swap(i, j int)      { nl[i], nl[j] = nl[j], nl[i] }
 
 type Option func(opts *options)
 
@@ -74,10 +74,10 @@ func New[T any](opts ...Option) *Hash[T] {
 	return nHash
 }
 
-func (this *Hash[T]) Add(key string, value T, weight int) {
-	var r = this.opts.spots * weight
+func (h *Hash[T]) Add(key string, value T, weight int) {
+	var r = h.opts.spots * weight
 
-	var nHash = this.opts.hash()
+	var nHash = h.opts.hash()
 
 	for i := 0; i < r; i++ {
 		nHash.Write([]byte(key + ":" + strconv.Itoa(i)))
@@ -86,33 +86,33 @@ func (this *Hash[T]) Add(key string, value T, weight int) {
 			value: value,
 			point: nHash.Sum32(),
 		}
-		this.nodes = append(this.nodes, nNode)
+		h.nodes = append(h.nodes, nNode)
 		nHash.Reset()
 	}
 }
 
-func (this *Hash[T]) Prepare() {
-	sort.Slice(this.nodes, func(i, j int) bool {
-		return this.nodes[i].point < this.nodes[j].point
+func (h *Hash[T]) Prepare() {
+	sort.Slice(h.nodes, func(i, j int) bool {
+		return h.nodes[i].point < h.nodes[j].point
 	})
-	this.length = len(this.nodes)
+	h.length = len(h.nodes)
 }
 
-func (this *Hash[T]) Get(key string) T {
-	if len(this.nodes) == 0 {
-		return this.empty
+func (h *Hash[T]) Get(key string) T {
+	if len(h.nodes) == 0 {
+		return h.empty
 	}
 
-	var nHash = this.opts.hash()
+	var nHash = h.opts.hash()
 	nHash.Write([]byte(key))
 	var value = nHash.Sum32()
 
-	i := sort.Search(this.length, func(i int) bool {
-		return this.nodes[i].point >= value
+	i := sort.Search(h.length, func(i int) bool {
+		return h.nodes[i].point >= value
 	})
 
-	if i == this.length {
+	if i == h.length {
 		i = 0
 	}
-	return this.nodes[i].value
+	return h.nodes[i].value
 }
